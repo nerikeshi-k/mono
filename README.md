@@ -2,8 +2,9 @@
 before: https://github.com/nerikeshi-k/benienma
 
 ## 概略
-- /order/?name=&lt;blob_name&gt;でGCSにある画像を配信できます
+- /_/&lt;blob_name&gt; でGCSにある画像を配信できます
 - 一度配信した画像はしばらくキャッシュされます
+- /w=400/&lt;blob_name&gt; で最大横幅が400になるように縮小させて画像を配信できます
 - 対応はGoogle Cloud Storageのみで、AWSやAzureでは使えません
 
 ## ビルド

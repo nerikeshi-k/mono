@@ -1,15 +1,13 @@
-package main
+package provider
 
 import (
 	"bytes"
-	"fmt"
+	"errors"
 	"io"
 	"io/ioutil"
 	"mime"
-	"net/http"
 	"os"
 	"path"
-	"strconv"
 	"time"
 
 	"mono/config"
@@ -19,9 +17,22 @@ import (
 	"mono/storageclient"
 	"mono/utils"
 
-	"github.com/labstack/echo/v4"
 	"go.uber.org/zap"
 )
+
+var (
+	// ErrNotFound blobやbucketが見つからなかった
+	ErrNotFound = errors.New("not found")
+
+	// ErrInternalServerError 処理中の予期せぬエラー
+	ErrInternalServerError = errors.New("internal server error")
+)
+
+// Product provideが返すもの
+type Product struct {
+	Data   []byte
+	Record *recordstore.Record
+}
 
 func fetchRecord(bucketName string, blobName string) (*recordstore.Record, error) {
 	sugar := zap.NewExample().Sugar()
@@ -75,42 +86,10 @@ func fetchRecord(bucketName string, blobName string) (*recordstore.Record, error
 	return newRecord, nil
 }
 
-func parsePreprocessQuery(c echo.Context) preprocess.Query {
-	atoi := func(s string) uint {
-		num, err := strconv.ParseUint(s, 10, 32)
-		if err != nil {
-			return 0
-		}
-		return uint(num)
-	}
-	query := preprocess.Query{
-		MaxWidth:  atoi(c.QueryParam("maxwidth")),
-		MaxHeight: atoi(c.QueryParam("maxheight")),
-		Width:     atoi(c.QueryParam("width")),
-		Height:    atoi(c.QueryParam("height")),
-	}
-	return query
-}
-
-func provide(c echo.Context) error {
+// Provide bucketからblobを取ってきてProductにして返す
+func Provide(bucketName string, blobName string, query preprocess.Query) (*Product, error) {
 	sugar := zap.NewExample().Sugar()
 	defer sugar.Sync()
-
-	// blob名取得
-	blobName := c.QueryParam("name")
-	if blobName == "" {
-		return c.String(http.StatusBadRequest, fmt.Sprintf("invalid request"))
-	}
-
-	// bucket名取得
-	bucketName := c.Request().Header.Get("X-Bucket-Name")
-	if bucketName == "" {
-		// 指定がないならconfigにある一個目のbuckets名とする
-		buckets := config.Get().Buckets
-		if len(buckets) > 0 {
-			bucketName = config.Get().Buckets[0].Name
-		}
-	}
 
 	// bucket名がconfig内に指定されているか確認
 	bucketNameExists := false
@@ -121,35 +100,37 @@ func provide(c echo.Context) error {
 		}
 	}
 	if !bucketNameExists {
-		return c.String(http.StatusBadRequest, fmt.Sprintf("bucket not found"))
+		return nil, ErrNotFound
 	}
 
 	record, err := fetchRecord(bucketName, blobName)
 	if err != nil {
 		if err == storageclient.ErrBlobNotFound || err == storageclient.ErrBucketNotFound {
-			return c.String(http.StatusNotFound, fmt.Sprintf("not found"))
+			return nil, ErrNotFound
 		}
 		sugar.Errorw("failed to fetch record process", "error", "err")
-		return c.String(http.StatusInternalServerError, fmt.Sprintf("server error"))
+		return nil, ErrInternalServerError
 	}
 	fp, err := os.Open(record.GetPath())
 	if err != nil {
 		sugar.Errorw("failed to open recorded cache data", "error", "err")
-		return c.String(http.StatusInternalServerError, fmt.Sprintf("server error"))
+		return nil, ErrInternalServerError
 	}
 	defer fp.Close()
 	data, err := ioutil.ReadAll(fp)
 	if err != nil {
 		sugar.Errorw("failed to read", "error", "err")
-		return c.String(http.StatusInternalServerError, fmt.Sprintf("server error"))
+		return nil, ErrInternalServerError
 	}
 
-	q := parsePreprocessQuery(c)
-	data, err = preprocess.ReduceImage(data, record.ContentType, q)
+	data, err = preprocess.ReduceImage(data, record.ContentType, query)
 	if err != nil {
 		sugar.Errorw("failed to pre-processe object", "error", "err")
-		return c.String(http.StatusInternalServerError, fmt.Sprintf("server error"))
+		return nil, ErrInternalServerError
 	}
-	c.Response().Header().Set("Cache-Control", config.Get().CacheControlHeader)
-	return c.Blob(http.StatusOK, record.ContentType, data)
+	product := &Product{
+		Data:   data,
+		Record: record,
+	}
+	return product, nil
 }

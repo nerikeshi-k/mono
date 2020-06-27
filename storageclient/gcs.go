@@ -50,7 +50,7 @@ func FetchBlob(bucketName string, blobName string) (*Meta, error) {
 		case storage.ErrBucketNotExist:
 			return nil, ErrBucketNotFound
 		case storage.ErrObjectNotExist:
-			return nil, ErrBucketNotFound
+			return nil, ErrBlobNotFound
 		default:
 			return nil, err
 		}

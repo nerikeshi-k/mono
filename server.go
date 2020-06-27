@@ -2,13 +2,13 @@ package main
 
 import (
 	"fmt"
-	"net/http"
 
 	"mono/config"
 	"mono/gc"
+	"mono/handlers"
 	"mono/recordstore"
 
-	"github.com/labstack/echo/v4"
+	echo "github.com/labstack/echo/v4"
 )
 
 func main() {
@@ -25,11 +25,7 @@ func main() {
 	go gc.Start()
 	defer recordstore.Close()
 
-	e.GET("/", index)
-	e.GET("/order/", provide)
+	e.GET("/order/", handlers.HandleOrder)
+	e.GET("/*", handlers.Handle)
 	e.Logger.Fatal(e.Start(fmt.Sprintf(":%d", config.Get().Port)))
-}
-
-func index(c echo.Context) error {
-	return c.String(http.StatusOK, "mono.")
 }
