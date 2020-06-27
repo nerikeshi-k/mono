@@ -1,7 +1,6 @@
 .DS_Store
 config.json
 mono
-/objects
 .vscode/*
 
 # Binaries for programs and plugins
@@ -19,3 +18,7 @@ mono
 
 # Dependency directories (remove the comment below to include it)
 vendor/
+
+*.tmp
+tmp/*
+secrets/*
