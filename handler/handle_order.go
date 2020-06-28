@@ -6,7 +6,6 @@ import (
 	"mono/preprocess"
 	"mono/provider"
 	"net/http"
-	"strconv"
 
 	echo "github.com/labstack/echo/v4"
 	"go.uber.org/zap"
@@ -52,18 +51,11 @@ func HandleOrder(c echo.Context) error {
 }
 
 func parseOrderPreprocessQuery(c echo.Context) preprocess.Query {
-	atoi := func(s string) uint {
-		num, err := strconv.ParseUint(s, 10, 32)
-		if err != nil {
-			return 0
-		}
-		return uint(num)
-	}
 	query := preprocess.Query{
-		MaxWidth:  atoi(c.QueryParam("maxwidth")),
-		MaxHeight: atoi(c.QueryParam("maxheight")),
-		Width:     atoi(c.QueryParam("width")),
-		Height:    atoi(c.QueryParam("height")),
+		MaxWidth:  atoiPos(c.QueryParam("maxwidth")),
+		MaxHeight: atoiPos(c.QueryParam("maxheight")),
+		Width:     atoiPos(c.QueryParam("width")),
+		Height:    atoiPos(c.QueryParam("height")),
 	}
 	return query
 }

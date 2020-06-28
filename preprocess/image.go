@@ -6,7 +6,7 @@ import (
 	"image/jpeg"
 	"image/png"
 
-	"github.com/nfnt/resize"
+	"github.com/disintegration/imaging"
 )
 
 // ReduceImage クエリに従って画像を加工して返す
@@ -14,7 +14,7 @@ func ReduceImage(data []byte, contentType string, q Query) ([]byte, error) {
 	if contentType != "image/jpeg" && contentType != "image/png" {
 		return data, nil
 	}
-	if q.IsDefault() {
+	if q.HasNoMutation() {
 		return data, nil
 	}
 
@@ -30,17 +30,19 @@ func ReduceImage(data []byte, contentType string, q Query) ([]byte, error) {
 		return nil, err
 	}
 
-	// リサイズ
-	if q.MaxWidth != 0 && q.MaxHeight != 0 {
-		img = resize.Thumbnail(q.MaxWidth, q.MaxHeight, img, resize.Lanczos3)
-	} else if q.MaxWidth != 0 && q.MaxHeight == 0 {
-		img = resize.Thumbnail(q.MaxWidth, 4294967295, img, resize.Lanczos3)
-	} else if q.MaxWidth == 0 && q.MaxHeight != 0 {
-		img = resize.Thumbnail(4294967295, q.MaxHeight, img, resize.Lanczos3)
-	} else if q.Width != 0 {
-		img = resize.Resize(q.Width, 0, img, resize.Lanczos3)
-	} else if q.Height != 0 {
-		img = resize.Resize(0, q.Height, img, resize.Lanczos3)
+	// リサイズ maxwidth, maxheightが指定されていた場合はwidth, heightより優先する
+	size := img.Bounds().Size()
+	if q.MaxWidth != 0 || q.MaxHeight != 0 {
+		var w, h = q.MaxWidth, q.MaxHeight
+		if w == 0 {
+			w = size.X
+		}
+		if h == 0 {
+			h = size.Y
+		}
+		img = imaging.Fit(img, w, h, imaging.Lanczos)
+	} else if q.Width != 0 || q.Height != 0 {
+		img = imaging.Resize(img, q.Width, q.Height, imaging.Lanczos)
 	}
 
 	buf := new(bytes.Buffer)

@@ -7,7 +7,6 @@ import (
 	"mono/provider"
 	"net/http"
 	"net/url"
-	"strconv"
 	"strings"
 
 	echo "github.com/labstack/echo/v4"
@@ -102,23 +101,15 @@ func parseRawQuery(raw string) *preprocess.Query {
 	return &query
 }
 
-func strToUInt(s string) uint {
-	num, err := strconv.ParseUint(s, 10, 32)
-	if err != nil {
-		return 0
-	}
-	return uint(num)
-}
-
 func insertKeyValue(query *preprocess.Query, key string, value string) {
 	switch key {
 	case "w":
-		query.MaxWidth = strToUInt(value)
+		query.MaxWidth = atoiPos(value)
 	case "h":
-		query.MaxHeight = strToUInt(value)
+		query.MaxHeight = atoiPos(value)
 	case "wf":
-		query.Width = strToUInt(value)
+		query.Width = atoiPos(value)
 	case "hf":
-		query.Height = strToUInt(value)
+		query.Height = atoiPos(value)
 	}
 }
