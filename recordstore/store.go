@@ -7,7 +7,7 @@ import (
 	"encoding/hex"
 
 	"mono/config"
-	"mono/utils"
+	"mono/util"
 
 	set "github.com/deckarep/golang-set"
 	badger "github.com/dgraph-io/badger/v2"
@@ -47,7 +47,7 @@ func GenerateKey(bucketName string, blobName string) string {
 
 // GenerateCacheFileName UUIDを返すだけ
 func GenerateCacheFileName() string {
-	return utils.GenerateUUID()
+	return util.GenerateUUID()
 }
 
 // GetRecord KVSからRecordを探して返す、なければnilとerrorを返す

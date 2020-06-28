@@ -5,7 +5,7 @@ import (
 
 	"mono/config"
 	"mono/gc"
-	"mono/handlers"
+	"mono/handler"
 	"mono/recordstore"
 
 	echo "github.com/labstack/echo/v4"
@@ -25,7 +25,7 @@ func main() {
 	go gc.Start()
 	defer recordstore.Close()
 
-	e.GET("/order/", handlers.HandleOrder)
-	e.GET("/*", handlers.Handle)
+	e.GET("/order/", handler.HandleOrder)
+	e.GET("/*", handler.Handle)
 	e.Logger.Fatal(e.Start(fmt.Sprintf(":%d", config.Get().Port)))
 }

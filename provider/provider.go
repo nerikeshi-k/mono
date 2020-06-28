@@ -15,7 +15,7 @@ import (
 	"mono/preprocess"
 	"mono/recordstore"
 	"mono/storageclient"
-	"mono/utils"
+	"mono/util"
 
 	"go.uber.org/zap"
 )
@@ -40,7 +40,7 @@ func fetchRecord(bucketName string, blobName string) (*recordstore.Record, error
 
 	key := recordstore.GenerateKey(bucketName, blobName)
 	record, err := recordstore.GetRecord(key)
-	if err == nil && utils.DoesFileExist(record.GetPath()) {
+	if err == nil && util.DoesFileExist(record.GetPath()) {
 		if env.DEBUG {
 			sugar.Debugw("cache hit")
 		}

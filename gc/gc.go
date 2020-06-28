@@ -8,7 +8,7 @@ import (
 	"mono/config"
 	"mono/env"
 	"mono/recordstore"
-	"mono/utils"
+	"mono/util"
 
 	"go.uber.org/zap"
 )
@@ -94,7 +94,7 @@ func collectUnreachableCacheFileNames() []string {
 		sugar.Errorw("failed to get keys on collectUnreachables", "error", err)
 		return []string{}
 	}
-	cacheFileNames, err := utils.ListDir(config.Get().CacheDirPath)
+	cacheFileNames, err := util.ListDir(config.Get().CacheDirPath)
 	if err != nil {
 		sugar.Errorw("failed to get cache file names on collectUnreachables", "error", err)
 		return []string{}
@@ -109,7 +109,7 @@ func collectUnreachableCacheFileNames() []string {
 
 // キャッシュ用ディレクトリの容量が限界に近くなってきた場合キーをいくつか消す
 func sweepRecordsIfVolumeNealyFull() error {
-	volume := utils.GetDirSizeMB(config.Get().CacheDirPath)
+	volume := util.GetDirSizeMB(config.Get().CacheDirPath)
 	// if volume is over 90% of max
 	if volume > (float64(config.Get().MaxCacheVolume) * 0.9) {
 		recordstore.DeleteKeysWithSize(randomDeleteBatchSize)

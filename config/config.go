@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"io/ioutil"
 
-	"mono/utils"
+	"mono/util"
 )
 
 var config Config
@@ -42,7 +42,7 @@ func Load() error {
 	if configFilePath == "" {
 		return fmt.Errorf("use --conf to set config.json path")
 	}
-	if !utils.DoesFileExist(configFilePath) {
+	if !util.DoesFileExist(configFilePath) {
 		return fmt.Errorf("%s does not exist", configFilePath)
 	}
 	bytes, err := ioutil.ReadFile(configFilePath)
@@ -52,7 +52,7 @@ func Load() error {
 	if err := json.Unmarshal(bytes, &config); err != nil {
 		return err
 	}
-	if !utils.DoesFileExist(config.CacheDirPath) {
+	if !util.DoesFileExist(config.CacheDirPath) {
 		return fmt.Errorf("Object caching dir %s does not exist", config.CacheDirPath)
 	}
 	return nil
