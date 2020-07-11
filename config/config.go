@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"io/ioutil"
 
-	"mono/util"
+	"github.com/nerikeshi-k/mono/util"
 )
 
 var config Config

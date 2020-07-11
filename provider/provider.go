@@ -10,12 +10,12 @@ import (
 	"path"
 	"time"
 
-	"mono/config"
-	"mono/env"
-	"mono/preprocess"
-	"mono/recordstore"
-	"mono/storageclient"
-	"mono/util"
+	"github.com/nerikeshi-k/mono/config"
+	"github.com/nerikeshi-k/mono/env"
+	"github.com/nerikeshi-k/mono/preprocess"
+	"github.com/nerikeshi-k/mono/recordstore"
+	"github.com/nerikeshi-k/mono/storageclient"
+	"github.com/nerikeshi-k/mono/util"
 
 	"go.uber.org/zap"
 )

@@ -2,12 +2,13 @@ package handler
 
 import (
 	"errors"
-	"mono/config"
-	"mono/preprocess"
-	"mono/provider"
 	"net/http"
 	"net/url"
 	"strings"
+
+	"github.com/nerikeshi-k/mono/config"
+	"github.com/nerikeshi-k/mono/preprocess"
+	"github.com/nerikeshi-k/mono/provider"
 
 	echo "github.com/labstack/echo/v4"
 	"go.uber.org/zap"

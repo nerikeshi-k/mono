@@ -5,7 +5,7 @@ import (
 	"path"
 	"time"
 
-	"mono/config"
+	"github.com/nerikeshi-k/mono/config"
 )
 
 // Record storeに保存するデータ

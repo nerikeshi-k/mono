@@ -1,4 +1,4 @@
-module mono
+module github.com/nerikeshi-k/mono
 
 go 1.12
 

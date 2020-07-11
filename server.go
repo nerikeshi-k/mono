@@ -3,10 +3,10 @@ package main
 import (
 	"fmt"
 
-	"mono/config"
-	"mono/gc"
-	"mono/handler"
-	"mono/recordstore"
+	"github.com/nerikeshi-k/mono/config"
+	"github.com/nerikeshi-k/mono/gc"
+	"github.com/nerikeshi-k/mono/handler"
+	"github.com/nerikeshi-k/mono/recordstore"
 
 	echo "github.com/labstack/echo/v4"
 )

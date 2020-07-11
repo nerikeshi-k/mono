@@ -6,8 +6,8 @@ import (
 	"crypto/md5"
 	"encoding/hex"
 
-	"mono/config"
-	"mono/util"
+	"github.com/nerikeshi-k/mono/config"
+	"github.com/nerikeshi-k/mono/util"
 
 	set "github.com/deckarep/golang-set"
 	badger "github.com/dgraph-io/badger/v2"
