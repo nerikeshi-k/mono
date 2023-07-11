@@ -48,7 +48,7 @@ func ReduceImage(data []byte, contentType string, q Query) ([]byte, error) {
 	buf := new(bytes.Buffer)
 	switch contentType {
 	case "image/jpeg":
-		err = jpeg.Encode(buf, img, &jpeg.Options{Quality: 100})
+		err = jpeg.Encode(buf, img, &jpeg.Options{Quality: 85})
 	case "image/png":
 		err = png.Encode(buf, img)
 	}
