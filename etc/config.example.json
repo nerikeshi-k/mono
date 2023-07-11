@@ -1,7 +1,7 @@
 {
   "port": 1323,
-  "cache_volume_path": "/path/to/cache/objects/volume/directory",
-  "record_store_volume_path": "/path/to/db/volume/directory",
+  "cache_volume_path": "/etc/mono/volume",
+  "record_store_volume_path": "/etc/mono/records",
   "cache_control_header": "max-age=3600",
   "cache_expires": 3600,
   "max_cache_volume": 40960,

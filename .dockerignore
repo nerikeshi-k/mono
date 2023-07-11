@@ -1,6 +1,6 @@
 #################
 ## MacOS
-#################
+#################d
 
 # General
 .DS_Store
@@ -84,15 +84,9 @@ vendor/
 ## Project
 #################
 
-/etc/*
-!/etc/.gitkeep
-!/etc/config.example.json
-!/etc/gcpkey.example.json
-!/etc/records
-/etc/records/*
-!/etc/records/.gitkeep
-!/etc/volume
-/etc/volume/*
-!/etc/volume/.gitkeep
-
+etc/*
 mono
+
+Dockerfile
+config.example.json
+README.md
