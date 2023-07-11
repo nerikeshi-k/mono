@@ -1,0 +1,27 @@
+name: push-image
+
+on: 
+  push:
+    branches:
+      - main
+
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Bulid image
+        run: docker build . -t mono:latest
+
+      - name: Tag
+        run: docker tag mono:latest asia-northeast1-docker.pkg.dev/odaibako/mono/mono:latest
+
+      - name: Login
+        run: echo "${{ secrets.GCPKEY }}" | base64 -d |docker login -u _json_key --password-stdin https://asia-northeast1-docker.pkg.dev
+
+      - name: Push
+        run: docker push asia-northeast1-docker.pkg.dev/odaibako/mono/mono:latest
