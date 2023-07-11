@@ -10,7 +10,7 @@ import (
 	"github.com/nerikeshi-k/mono/util"
 
 	set "github.com/deckarep/golang-set"
-	badger "github.com/dgraph-io/badger/v2"
+	badger "github.com/dgraph-io/badger/v4"
 	"github.com/pkg/errors"
 	"go.uber.org/zap"
 )
