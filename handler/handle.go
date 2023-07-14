@@ -4,6 +4,7 @@ import (
 	"errors"
 	"net/http"
 	"net/url"
+	"regexp"
 	"strings"
 
 	"github.com/nerikeshi-k/mono/config"
@@ -61,7 +62,7 @@ func Handle(c echo.Context) error {
 		return c.String(http.StatusInternalServerError, "500 server error")
 	}
 	c.Response().Header().Set("Cache-Control", config.Get().CacheControlHeader)
-	return c.Blob(http.StatusOK, product.Record.ContentType, product.Data)
+	return c.Blob(http.StatusOK, query.PreprocessQuery.EncodeTarget, product.Data)
 }
 
 func parseURL(URL *url.URL) (*Query, error) {
@@ -78,6 +79,23 @@ func parseURL(URL *url.URL) (*Query, error) {
 
 	sugar.Debugw("values", "rawQuery", rawQuery, "blobName", blobName)
 	preprocessQuery := parseRawQuery(rawQuery)
+
+	r := regexp.MustCompile(`\.[a-zA-Z]+\.(png|jpeg|jpg|webp)$`)
+	var encodingTarget = ""
+	if result := r.FindAllSubmatch([]byte(blobName), -1); len(result) > 0 {
+		extension := string(result[0][1])
+		blobName = blobName[:len(blobName)-len(extension)-1]
+		switch extension {
+		case "png":
+			encodingTarget = "image/png"
+		case "jpeg", "jpg":
+			encodingTarget = "image/jpeg"
+		case "webp":
+			encodingTarget = "image/webp"
+		}
+	}
+
+	preprocessQuery.EncodeTarget = encodingTarget
 	query := &Query{
 		BlobName:        blobName,
 		PreprocessQuery: *preprocessQuery,

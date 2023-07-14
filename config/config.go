@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
-	"io/ioutil"
+	"os"
 
 	"github.com/nerikeshi-k/mono/util"
 )
@@ -45,7 +45,7 @@ func Load() error {
 	if !util.DoesFileExist(configFilePath) {
 		return fmt.Errorf("%s does not exist", configFilePath)
 	}
-	bytes, err := ioutil.ReadFile(configFilePath)
+	bytes, err := os.ReadFile(configFilePath)
 	if err != nil {
 		return err
 	}
@@ -53,7 +53,7 @@ func Load() error {
 		return err
 	}
 	if !util.DoesFileExist(config.CacheDirPath) {
-		return fmt.Errorf("Object caching dir %s does not exist", config.CacheDirPath)
+		return fmt.Errorf("object caching dir %s does not exist", config.CacheDirPath)
 	}
 	return nil
 }

@@ -1,7 +1,6 @@
 package util
 
 import (
-	"io/ioutil"
 	"os"
 	"path/filepath"
 
@@ -17,7 +16,7 @@ func DoesFileExist(filename string) bool {
 // ListDir 与えられたパスのディレクトリのファイル一覧を返す
 func ListDir(dir string) ([]string, error) {
 	filenames := []string{}
-	files, err := ioutil.ReadDir(dir)
+	files, err := os.ReadDir(dir)
 	if err != nil {
 		return filenames, err
 	}
@@ -46,15 +45,4 @@ func GetDirSizeMB(path string) float64 {
 func GenerateUUID() string {
 	uuid := uuid.New()
 	return uuid.String()
-}
-
-// GetExtension contentType -> Ext
-func GetExtension(contentType string) string {
-	switch contentType {
-	case "image/png":
-		return "png"
-	case "image/jpeg":
-		return "jpeg"
-	}
-	return ""
 }

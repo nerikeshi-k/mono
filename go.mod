@@ -9,8 +9,10 @@ require (
 	github.com/disintegration/imaging v1.6.2
 	github.com/google/uuid v1.3.0
 	github.com/labstack/echo/v4 v4.1.16
+	github.com/pixiv/go-libwebp v0.1.0
 	github.com/pkg/errors v0.9.1
 	go.uber.org/zap v1.24.0
+	golang.org/x/exp v0.0.0-20230711153332-06a737ee72cb
 	golang.org/x/net v0.12.0
 )
 
@@ -42,7 +44,7 @@ require (
 	go.uber.org/atomic v1.7.0 // indirect
 	go.uber.org/multierr v1.6.0 // indirect
 	golang.org/x/crypto v0.11.0 // indirect
-	golang.org/x/image v0.0.0-20191009234506-e7c1f5e7dbb8 // indirect
+	golang.org/x/image v0.0.0-20210628002857-a66eb6448b8d // indirect
 	golang.org/x/oauth2 v0.8.0 // indirect
 	golang.org/x/sys v0.10.0 // indirect
 	golang.org/x/text v0.11.0 // indirect

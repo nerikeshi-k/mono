@@ -4,10 +4,10 @@ import (
 	"bytes"
 	"errors"
 	"io"
-	"io/ioutil"
 	"mime"
 	"os"
 	"path"
+	"strings"
 	"time"
 
 	"github.com/nerikeshi-k/mono/config"
@@ -16,6 +16,7 @@ import (
 	"github.com/nerikeshi-k/mono/recordstore"
 	"github.com/nerikeshi-k/mono/storageclient"
 	"github.com/nerikeshi-k/mono/util"
+	"golang.org/x/exp/slices"
 
 	"go.uber.org/zap"
 )
@@ -86,6 +87,18 @@ func fetchRecord(bucketName string, blobName string) (*recordstore.Record, error
 	return newRecord, nil
 }
 
+func predictContentType(blobName string) (string, error) {
+	if strings.HasSuffix(blobName, ".png") {
+		return "image/png", nil
+	} else if strings.HasSuffix(blobName, ".jpeg") || strings.HasSuffix(blobName, ".jpg") {
+		return "image/jpeg", nil
+	} else if strings.HasSuffix(blobName, ".webp") {
+		return "image/webp", nil
+	} else {
+		return "", ErrInternalServerError
+	}
+}
+
 // Provide bucketからblobを取ってきてProductにして返す
 func Provide(bucketName string, blobName string, query preprocess.Query) (*Product, error) {
 	sugar := zap.NewExample().Sugar()
@@ -117,13 +130,21 @@ func Provide(bucketName string, blobName string, query preprocess.Query) (*Produ
 		return nil, ErrInternalServerError
 	}
 	defer fp.Close()
-	data, err := ioutil.ReadAll(fp)
+	data, err := io.ReadAll(fp)
 	if err != nil {
 		sugar.Errorw("failed to read", "error", "err")
 		return nil, ErrInternalServerError
 	}
 
-	data, err = preprocess.ReduceImage(data, record.ContentType, query)
+	contentType := record.ContentType
+	if !slices.Contains(env.SUPPORTED_CONTENT_TYPES, contentType) {
+		predicted, err := predictContentType(blobName)
+		if err != nil {
+			return nil, err
+		}
+		contentType = predicted
+	}
+	data, err = preprocess.ReduceImage(data, contentType, query)
 	if err != nil {
 		sugar.Errorw("failed to pre-processe object", "error", "err")
 		return nil, ErrInternalServerError

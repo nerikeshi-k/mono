@@ -2,7 +2,7 @@ package storageclient
 
 import (
 	"errors"
-	"io/ioutil"
+	"io"
 
 	"cloud.google.com/go/storage"
 	"go.uber.org/zap"
@@ -61,7 +61,7 @@ func FetchBlob(bucketName string, blobName string) (*Meta, error) {
 	if err != nil {
 		return nil, err
 	}
-	data, err := ioutil.ReadAll(reader)
+	data, err := io.ReadAll(reader)
 	if err != nil {
 		return nil, err
 	}

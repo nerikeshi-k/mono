@@ -1,16 +1,23 @@
-FROM golang:1.20 as builder
+# golangイメージとdistrolessイメージの間でdebianバージョンおよびCPUアーキテクチャを一致させること
 
-WORKDIR /app
+FROM amd64/golang:1.20-bullseye as builder
+
+WORKDIR /workspace
+RUN wget https://storage.googleapis.com/downloads.webmproject.org/releases/webp/libwebp-1.3.1.tar.gz \
+    && tar xvzf libwebp-1.3.1.tar.gz \
+    && cd libwebp-1.3.1 \
+    && ./configure \
+    && make \
+    && make install
+
+WORKDIR /go/src
 COPY . .
-RUN go get && CGO_ENABLED=0 go build --tags=prod
+RUN go mod download
+RUN GOOS=linux GOARC=amd64 CGO_ENABLED=1 go build -ldflags '-s -w' -o /go/bin/mono --tags=prod
 
-
-FROM gcr.io/distroless/static-debian11:latest
-
-WORKDIR /var/lib/mono
-
-COPY --from=builder /app/mono .
-
+FROM gcr.io/distroless/base-debian11:latest-amd64
+COPY --from=builder /go/bin/mono /
+COPY --from=builder /usr/local/lib/ /usr/local/lib/
 ENV GOOGLE_APPLICATION_CREDENTIALS=/etc/mono/gcpkey.json
-
-CMD ["./mono", "-conf", "/etc/mono/config.json"]
+ENV LD_LIBRARY_PATH=/usr/local/lib
+CMD ["/mono", "-conf", "/etc/mono/config.json"]
