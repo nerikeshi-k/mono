@@ -25,7 +25,6 @@ func main() {
 	go gc.Start()
 	defer recordstore.Close()
 
-	e.GET("/order/", handler.HandleOrder)
 	e.GET("/*", handler.Handle)
 	e.Logger.Fatal(e.Start(fmt.Sprintf(":%d", config.Get().Port)))
 }
