@@ -1,11 +1,11 @@
 # golangイメージとdistrolessイメージの間でdebianバージョンおよびCPUアーキテクチャを一致させること
 
-FROM amd64/golang:1.20-bullseye as builder
+FROM amd64/golang:1.21-bullseye as builder
 
 WORKDIR /workspace
-RUN wget https://storage.googleapis.com/downloads.webmproject.org/releases/webp/libwebp-1.3.1.tar.gz \
-    && tar xvzf libwebp-1.3.1.tar.gz \
-    && cd libwebp-1.3.1 \
+RUN wget https://storage.googleapis.com/downloads.webmproject.org/releases/webp/libwebp-1.3.2.tar.gz \
+    && tar xvzf libwebp-1.3.2.tar.gz \
+    && cd libwebp-1.3.2 \
     && ./configure \
     && make \
     && make install
